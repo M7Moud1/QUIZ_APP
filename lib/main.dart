@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+
+import 'Quiz.dart';
+import 'Result.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -10,54 +14,73 @@ class MyApp extends StatefulWidget {
   State<StatefulWidget> createState() {
     // TODO: implement createState
 
+
+
     return MyAppState();
     throw UnimplementedError();
   }
 }
 
 class MyAppState extends State<MyApp> {
+  var _lastIndex = 0;
+  var _TotalIndex = 0;
 
-  var lastIndex = 0;
+  final questions = const [
+    {
+      "question": "What is your name ?",
+      "answers" : [
+        {"text":"Mahmoud", "score":10},
+        {"text":"Ahmed" , "score" : 20 },
+        {"text":"Mohamed" , "score" : 30}
+      ]
 
-  void AnswerQuestion() {
+    },
+
+    {
+      "question":"How old are you ?",
+      "answers" : [ {"text":"10", "score":10},
+        {"text":"20" , "score" : 20 },
+        {"text":"30" , "score" : 30}
+        ]
+    }
+  ];
+
+  void resetQuiz() {
 
     setState(() {
-      lastIndex += 1;
+      _TotalIndex = 0;
+      _lastIndex = 0;
+    });
+  }
+
+  void answerQuestion(int _score) {
+
+    _TotalIndex += _score;
+    setState(() {
+      _lastIndex += 1;
     });
 
     print("Answer chosen");
   }
 
+  set lastIndex(int index) => lastIndex = index;
+
   @override
   Widget build(BuildContext context) {
-    var questions = ["What is your name ?",
-      "How old are you ?"
-    ];
+
 
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text(questions[lastIndex]),
+          title: Text('My first app'),
         ),
-        body: Column(
-          children: [
-            Text('The question'),
-            RaisedButton(
-              child: Text("Answer 1"),
-              onPressed: AnswerQuestion,
-            ),
-
-            RaisedButton(
-              child: Text("Answer 2"),
-              onPressed: AnswerQuestion,
-            ),
-
-            RaisedButton(
-              child: Text("Answer 3"),
-              onPressed: AnswerQuestion,
-            ),
-          ],
-        ),
+        body: _lastIndex < questions.length ?
+            Quiz(
+              answerQuestion: answerQuestion,
+              lastIndex: _lastIndex,
+              questions: questions,
+            )
+        : Result(_TotalIndex , resetQuiz)
       ),
     );
   }
